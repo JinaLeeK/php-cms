@@ -17,8 +17,8 @@
                   include(TEMPLATE_BACK . DS . "posts.php");
                 }
 
-                if(isset($_GET['delete_post'])) {
-                  delete_post($_GET['delete_post']) ;
+                if(isset($_GET['delete_admin_post'])) {
+                  delete_post($_GET['delete_admin_post']) ;
                 }
 
                 if(isset($_GET['categories']) || isset($_GET['edit_category'])) {
@@ -47,6 +47,10 @@
 
                 if(isset($_GET['slides'])) {
                   include(TEMPLATE_BACK . DS . "slides.php");
+                }
+
+                if(isset($_GET['messages'])) {
+                  include(TEMPLATE_BACK . DS . "messages.php");
                 }
 
                 if(isset($_GET['delete_slide'])) {

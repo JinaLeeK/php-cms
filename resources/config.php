@@ -23,7 +23,7 @@ $connection = mysqli_connect(DB_HOST, DB_USER, DB_PASS, DB_NAME);
 // defined("DB_USER") ? null : define("DB_USER", "root");
 // defined("DB_PASS") ? null : define("DB_PASS","");
 // defined("DB_NAME") ? null : define("DB_NAME","babyblog_db");
-// defined("PER_PAGE") ? null : define("PER_PAGE", 4);
+defined("PER_PAGE") ? null : define("PER_PAGE", 4);
 //
 //
 //

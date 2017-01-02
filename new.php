@@ -1,11 +1,13 @@
+<?php require_once 'passwordLib.php'; ?>
 <?php
 if(!$connection) {
 	echo "<script>alert('not connected')</script>";
 }
 
 $img_path = 'resources/uploads/';
-$admin_img_path = 'resources/uploads/admin/';
+$admin_img_path =  'resources/uploads/admin/';
 $slide_path = 'resources/slides/';
+// $slide_path = SLIDES_DIRECTORY;
 
 function escape_string($string) {
 	global $connection;
@@ -247,7 +249,7 @@ function get_cat_in_home() {
 		<div class="col-xs-4">
 			<li>
 				<h4><strong><a href="posts.php?id={$row['category_id']}">{$row['category_title']}</a></strong></h4>
-				<img src="$image" width="100%">
+				<img src="resources/uploads/admin/{$row['category_image']}" width="100%">
 			</li>
 		</div>
 DELIMETER;
@@ -312,7 +314,6 @@ function edit_category_in_admin() {
 		}
 	}
 }
-
 function delete_category_in_admin() {
 	global $admin_img_path;
 
@@ -398,8 +399,6 @@ DELIMETER;
 	echo $category;
 	}
 }
-
-
 
 function get_category_title_by_id($id, $obj) {
 	$query = $obj=='sub' ? query("SELECT * FROM sub_categories WHERE sub_category_id={$id} LIMIT 1")
@@ -549,11 +548,12 @@ function get_breadcrumb() {
 		$sub_title = get_cat_title_by_id($sub_cat_id, 'sub');
 		echo "<li><a href='posts.php?cat_id={$sub_cat_id}'>{$sub_title}</a></li>";
 	}
-		if (isset($_GET['id'])) {
-				echo "<li><a href='posts.php?add_post&id={$cat_id}' class='btn btn-info btn-sm'>New post</a></li>";
-		} else {
-			echo "<li><a href='posts.php?add_post&cat_id={$sub_cat_id}' class='btn btn-info btn-sm'>New post</a></li>";
-		}
+
+	if (isset($_GET['id'])) {
+		echo "<li><a href='posts.php?add_post&id={$cat_id}' class='btn btn-info btn-sm'>New post</a></li>";
+	} else {
+		echo "<li><a href='posts.php?add_post&cat_id={$sub_cat_id}' class='btn btn-info btn-sm'>New post</a></li>";
+	}
 }
 
 // manage post
@@ -582,18 +582,10 @@ function add_post() {
 
 			$image = edit_photo_in_post($image,'post');
 		}
-
-		if (empty($sub_category_id)) {
-			$query = query("INSERT INTO posts (post_title, post_category_id, post_content, post_image, post_status, post_views_count, post_author, post_date)
-											VALUES ('{$title}', {$category_id}, '{$content}', '{$image}',
-											'{$status}', 0, '{$username}', '{$date}')");
-		} else {
-			$query = query("INSERT INTO posts (post_title, post_category_id, post_sub_category_id,
-											post_content, post_image, post_status, post_views_count, post_author, post_date)
-											VALUES ('{$title}', {$category_id}, {$sub_category_id}, '{$content}', '{$image}',
-											'{$status}', 0, '{$username}', '{$date}')");
-
-		}
+		$query = query("INSERT INTO posts (post_title, post_category_id, post_sub_category_id,
+										post_content, post_image, post_status, post_views_count, post_author, post_date)
+										VALUES ('{$title}', {$category_id}, {$sub_category_id}, '{$content}', '{$image}',
+										'{$status}', 0, '{$username}', '{$date}')");
 		confirmQuery($query);
 		$last_id = last_id();
 		if (!empty($last_id)) {
@@ -744,74 +736,6 @@ DELIMETER;
 	}
 }
 
-function get_posts_in_category_page() {
-	global $img_path;
-	$per_page = PER_PAGE;
-	$page = isset($_GET['page']) ? $_GET['page'] : 1;
-	$page_1 = $page==1 ? 0 : ($page * $per_page) - $per_page;
-
-	$query = isset($_GET['cat_id']) ? query("SELECT * FROM posts WHERE post_sub_category_id={$_GET['cat_id']}") :
-		query("SELECT * FROM posts WHERE post_category_id={$_GET['id']} AND post_status='publish'");
-
-	confirmQuery($query);
-	$count= mysqli_num_rows($query);
-	if (mysqli_num_rows($query) < 1) {
-		echo "<h4>No Post Yet</h4>";
-	} else {
-		$count = ceil($count/$per_page);
-		$page_query = isset($_GET['cat_id']) ? query("SELECT * FROM posts WHERE post_sub_category_id={$_GET['cat_id']} LIMIT {$page_1}, {$per_page}") :
-			query("SELECT * FROM posts WHERE post_category_id={$_GET['id']} AND post_status='publish' LIMIT {$page_1}, {$per_page}");
-
-		while ($row = fetch_array($query)) {
-			if (empty($row['post_image'])) {
-				$post_content = strlen($row['post_content'])>300 ? substr($row['post_content'],0,300).' ...' : $row['post_content'];
-				$post = <<< DELIMETER
-				<div class="case_study_box_container" style="border-top:1px solid #e7e7e7;">
-					<div class="col-xs-12 text">
-						<div id="date-writer-hit"><em><span class="glyphicon glyphicon-time"></span> {$row['post_date']} by {$row['post_author']}</em></div>
-						<h2>{$row['post_title']}</h2>
-						<p>{$post_content}</p>
-						<a href="post.php?id={$row['post_id']}" class="pull-right btn btn-inverse">Read More &gt; </a>
-					</div>
-					<hr class="clear" />
-				</div>
-DELIMETER;
-			echo $post;
-			} else {
-				$image = $img_path . $row['post_image'];
-				$post_content = strlen($row['post_content'])>100 ? substr($row['post_content'],0,100).' ...' : $row['post_content'];
-				$post = <<< DELIMETER
-				<div class="case_study_box_container" style="border-top:1px solid #e7e7e7;">
-					<div class="col-xs-4 image"> <img src="{$image}" alt="1"  width="100%"/> </div>
-					<div class="col-xs-8 text">
-						<div id="date-writer-hit"><em><span class="glyphicon glyphicon-time"></span> {$row['post_date']} by {$row['post_author']}</em></div>
-						<h2>{$row['post_title']}</h2>
-						<p>{$post_content}</p>
-						<a href="post.php?id={$row['post_id']}" class="pull-right btn btn-inverse">Read More &gt; </a>
-					</div>
-					<hr class="clear" />
-				</div>
-DELIMETER;
-				echo $post;
-			}
-		}
-		if ($count > 1) {
-			echo "<div align='center'><nav>";
-			echo "<ul class='pagination pagination-sm'>";
-			for($i=1 ; $i<=$count; $i++) {
-				if ($i == $page) {
-					echo "<li class='page-item active'><a class='page-link' href='posts.php?mypost&page={$i}'>$i</a></li>";
-				} else {
-					echo "<li class='page-item'><a class='page-link' href='posts.php?mypost&page={$i}'>$i</a></li>";
-				}
-			 }
-				echo "</ul></nav></div>";
-
-		}
-
-	}
-}
-
 function get_temp_posts() {
 	global $img_path;
 	$query = query("SELECT * FROM posts WHERE post_status='temp'");
@@ -888,6 +812,75 @@ DELIMETER;
 	}
 }
 
+function get_posts_in_category_page() {
+	global $img_path;
+	$per_page = PER_PAGE;
+	$page = isset($_GET['page']) ? $_GET['page'] : 1;
+	$page_1 = $page==1 ? 0 : ($page * $per_page) - $per_page;
+
+	$query = isset($_GET['cat_id']) ? query("SELECT * FROM posts WHERE post_sub_category_id={$_GET['cat_id']}") :
+		query("SELECT * FROM posts WHERE post_category_id={$_GET['id']} AND post_status='publish'");
+
+	confirmQuery($query);
+	$count= mysqli_num_rows($query);
+	if (mysqli_num_rows($query) < 1) {
+		echo "<h4>No Post Yet</h4>";
+	} else {
+		$count = ceil($count/$per_page);
+		$page_query = isset($_GET['cat_id']) ? query("SELECT * FROM posts WHERE post_sub_category_id={$_GET['cat_id']} LIMIT {$page_1}, {$per_page}") :
+			query("SELECT * FROM posts WHERE post_category_id={$_GET['id']} AND post_status='publish' LIMIT {$page_1}, {$per_page}");
+
+		while ($row = fetch_array($query)) {
+			if (empty($row['post_image'])) {
+				$post_content = strlen($row['post_content'])>300 ? substr($row['post_content'],0,300).' ...' : $row['post_content'];
+				$post = <<< DELIMETER
+				<div class="case_study_box_container" style="border-top:1px solid #e7e7e7;">
+					<div class="col-xs-12 text">
+						<div id="date-writer-hit"><em><span class="glyphicon glyphicon-time"></span> {$row['post_date']} by {$row['post_author']}</em></div>
+						<h2>{$row['post_title']}</h2>
+						<p>{$post_content}</p>
+						<a href="post.php?id={$row['post_id']}" class="pull-right btn btn-inverse">Read More &gt; </a>
+					</div>
+					<hr class="clear" />
+				</div>
+DELIMETER;
+			echo $post;
+			} else {
+				$image = $img_path . $row['post_image'];
+				$post_content = strlen($row['post_content'])>100 ? substr($row['post_content'],0,100).' ...' : $row['post_content'];
+				$post = <<< DELIMETER
+				<div class="case_study_box_container" style="border-top:1px solid #e7e7e7;">
+					<div class="col-xs-4 image"> <img src="{$image}" alt="1"  width="100%"/> </div>
+					<div class="col-xs-8 text">
+						<div id="date-writer-hit"><em><span class="glyphicon glyphicon-time"></span> {$row['post_date']} by {$row['post_author']}</em></div>
+						<h2>{$row['post_title']}</h2>
+						<p>{$post_content}</p>
+						<a href="post.php?id={$row['post_id']}" class="pull-right btn btn-inverse">Read More &gt; </a>
+					</div>
+					<hr class="clear" />
+				</div>
+DELIMETER;
+				echo $post;
+			}
+		}
+		if ($count > 1) {
+			echo "<div align='center'><nav>";
+			echo "<ul class='pagination pagination-sm'>";
+			for($i=1 ; $i<=$count; $i++) {
+				if ($i == $page) {
+					echo "<li class='page-item active'><a class='page-link' href='posts.php?mypost&page={$i}'>$i</a></li>";
+				} else {
+					echo "<li class='page-item'><a class='page-link' href='posts.php?mypost&page={$i}'>$i</a></li>";
+				}
+			 }
+				echo "</ul></nav></div>";
+
+		}
+
+	}
+}
+
+
 function edit_post() {
 	if(isset($_POST['update']) || isset($_POST['draft'])) {
 		$id = escape_string($_GET['edit_post']);
@@ -918,12 +911,11 @@ function edit_post() {
 			$image = $pre_image;
 		}
 
+
 			$query = "UPDATE posts SET ";
 			$query .= "post_title = '{$title}', ";
 			$query .= "post_category_id = '{$category_id}', ";
-			if (!empty($sub_category_id)) {
-				$query .= "post_sub_category_id = '{$sub_category_id}', ";
-			}
+			$query .= "post_sub_category_id = '{$sub_category_id}', ";
 			$query .= "post_content = '{$content}', ";
 			$query .= "post_image = '{$image}', ";
 			$query .= "post_status = '{$status}', ";
@@ -1383,4 +1375,3 @@ function edit_message() {
 		redirect("index.php?messages");
 	}
 }
-?>

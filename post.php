@@ -13,6 +13,8 @@ if (isset($_GET['delete_post'])) {
     $row = fetch_array($query);
     $cat_title = get_cat_title_by_id($row['post_category_id'],'');
     $sub_title = get_cat_title_by_id($row['post_sub_category_id'],'sub');
+    $category_id = $row['post_category_id'];
+
   }
 ?>
 
@@ -30,7 +32,7 @@ if (isset($_GET['delete_post'])) {
 <div class="content_section title">
   <ul class="breadcrumb">
     <li><a href="index.php">Home</a></li>
-    <li><a href="posts.php?id=<?php echo $row['post_category_id']; ?>"><?php echo $cat_title; ?></a></li>
+    <li><a href="posts.php?id=<?php echo $category_id; ?>"><?php echo $cat_title; ?></a></li>
     <li><a href="posts.php?cat_id=<?php echo $row['post_sub_category_id']; ?>"><?php echo $sub_title; ?></a></li>
     <li class="pull-right"><a href="admin/"><span class="glyphicon glyphicon-cog"></span> admin</a></li>
   </ul>

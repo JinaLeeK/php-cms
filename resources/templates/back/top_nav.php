@@ -5,7 +5,7 @@
 				<span class="icon-bar"></span>
 				<span class="icon-bar"></span>
 		</button>
-		<a class="navbar-brand" href="index.php">Baby Blog</a>
+		<a class="navbar-brand" href="index.php">Admin</a>
 		<a class="navbar-brand" href="../index.php">Home Site</a>
 </div>
 <!-- Top Menu Items -->

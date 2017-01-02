@@ -1,3 +1,8 @@
+<?php
+$query = query("SELECT * FROM posts WHERE post_id={$_GET['id']} LIMIT 1");
+confirmQuery($query);
+$row = fetch_array($query);
+?>
 <div class="blog-item">
   <?php if (!empty($row['post_image'])) {?>
   <div class="col-xs-8 col-xs-offset-2">
@@ -24,10 +29,10 @@
           <!-- <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut nec lacus   quam. Sed ornare, augue eget aliquet vehicula, purus libero elementum   neque, vel hendrerit eros lacus non leo. </p> -->
           <p><?php echo $row['post_content']; ?></p>
 <p>&nbsp;</p>
-          <div class="tags">
+          <!-- <div class="tags">
             <i class="icon-tags"></i> Tags <a class="btn btn-xs btn-primary" href="#">CSS3</a> <a class="btn btn-xs btn-primary" href="#">HTML5</a> <a class="btn btn-xs btn-primary" href="#">WordPress</a> <a class="btn btn-xs btn-primary" href="#">Joomla</a>
-          </div>
-          <p>&nbsp;</p>
+          </div> -->
+          <!-- <p>&nbsp;</p> -->
 <?php include(TEMPLATE_FRONT . DS . "post_comments.php") ?>
 
       </div> <!-- blog-content -->

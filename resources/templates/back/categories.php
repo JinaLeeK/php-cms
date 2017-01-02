@@ -28,13 +28,29 @@
       while ($row = fetch_array($query)) {
         $category_title = isset($_GET['obj']) ? $row['sub_category_title'] : $row['category_title'];
         $category_image = isset($_GET['obj']) ? '' : $row['category_image'];
+        $category_order = isset($_GET['obj']) ? '' : $row['category_order'];
       }
       ?>
     <form action="" method="post" enctype="multipart/form-data">
-        <div class="form-group">
-            <label for="category-title">Title</label>
-            <input type="text" name="title" class="form-control" value="<?php echo $category_title; ?>">
+      <div class="row">
+        <div class="col-sm-10">
+          <div class="form-group">
+              <label for="category-title">Title</label>
+              <input type="text" name="title" class="form-control" value="<?php echo $category_title; ?>">
+          </div>
         </div>
+        <?php if(!isset($_GET['obj'])) {?>
+        <div class="col-sm-2">
+          <div class="form-group">
+            <label for="">Order</label>
+            <select class="form-control" name="category_order">
+              <?php get_order_option_for_edit($category_order); ?>
+            </select>
+        <?php } ?>
+        </div>
+      </div>
+    </div>
+      <?php if(!isset($_GET['obj'])) { ?>
 
         <div class="form-group  preview-form">
             <input type="file" name="file" accept="image/*">
@@ -65,6 +81,7 @@
            <input style="width:206px; display:none;" value="remove" id="remove" class="btn btn-warning btn-block" />
 
         </div>
+      <?php }?>
         <div class="form-group">
             <input type="submit" class="btn btn-primary upload-btn" name="update" value="Edit" >
             <?php if(isset($_GET['obj'])) { ?>
@@ -86,6 +103,7 @@
               <input type="text" name="title" class="form-control" >
           </div>
         </div>
+        <?php if(!isset($_GET['obj'])) { ?>
         <div class="col-sm-2">
           <div class="form-group">
             <label>Order</label>
@@ -94,6 +112,7 @@
             </select>
           </div>
         </div>
+        <?php } ?>
       </div>
 
         <?php if(!isset($_GET['obj'])) { ?>
@@ -144,16 +163,19 @@
         <tr>
             <th>id</th>
             <th>Title</th>
+            <?php if(!isset($_GET['obj'])){ ?>
             <th>Order</th>
+            <?php } ?>
             <th></th>
         </tr>
       </thead>
       <tbody>
-        <?php
-        if (isset($_GET['obj'])) {
-          get_sub_cat_in_admin();
-        } else
-          get_cat_in_admin();
+          <?php
+          if (isset($_GET['obj'])) {
+            get_sub_cat_in_admin();
+          } else {
+            get_cat_in_admin();
+          }
         ?>
       </tbody>
     </table>

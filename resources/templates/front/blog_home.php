@@ -1,6 +1,13 @@
 <div id="welcome_text">
 	<h1>Welcome</h1>
-	<p><img src="media/teddy000.jpg" alt="Teddy" width="120" height="113" align="right" class="image_padding" />Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse fermentum aliquet varius. Maecenas mattis rutrum condimentum. Pellentesque at nisi sed arcu accumsan malesuada. Vestibulum sapien arcu, tincidunt nec fermentum vel, sagittis vel est. In at placerat arcu. Vivamus aliquam ipsum nisl. Ut nec leo turpis. Curabitur vel turpis eros, at volutpat enim. </p>
+	<p><img src="media/teddy000.jpg" alt="Teddy" width="120" height="113" align="right" class="image_padding" />
+		<?php
+		$query = query("SELECT * FROM messages WHERE message_title='welcome' LIMIT 1");
+		confirmQuery($query);
+		$row = fetch_array($query);
+		echo $row['message_content'];
+		?>
+		</p>
 </div>
 <p class="more"></p>
 <div id="post_in_home">

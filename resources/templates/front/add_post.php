@@ -1,3 +1,9 @@
+<?php
+if(!isset($_SESSION['username'])) {
+  set_message("Please log in to write a post.");
+  redirect("index.php?login");
+}
+?>
 <?php add_post(); ?>
 <div class="content_section title">
   <?php if(isset($_GET['cat_id']) || isset($_GET['id'])) { ?>

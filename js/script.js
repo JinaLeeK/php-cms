@@ -171,9 +171,9 @@ $(document).ready(function() {
 			post_category_id : {
 				required: true
 			},
-			post_sub_category_id :{
-				required: true
-			},
+			// post_sub_category_id :{
+			// 	required: true
+			// },
 			post_content : {
 				required: true
 			}
@@ -182,7 +182,7 @@ $(document).ready(function() {
 			post_title: "Please enter the title",
 			post_content: "Please enter the content",
 			post_category_id: "Select the category",
-			post_sub_category_id: "Select the sub category"
+			// post_sub_category_id: "Select the sub category"
 		}
 	});
 

@@ -1,5 +1,12 @@
 <div id="header">
-	<div id="logo"><h1><a href="index.php">Ellen's Family</a></h1></div>
+	<div id="logo"><h1><a href="index.php">
+		<?php
+			$query = query("SELECT * FROM messages WHERE message_title='title'");
+			confirmQuery($query);
+			$row = fetch_array($query);
+			echo $row['message_content'];
+		?>
+			</a></h1></div>
 	<div id="menu">
 		<ul id="navigation" >
 			<?php
